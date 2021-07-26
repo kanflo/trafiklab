@@ -9,5 +9,6 @@ Sign up for an API key at resrobot.se and then see test/tripmon.py for an exampl
 ## Installing
 
 ```
-sudo -H pip3 install -e .
+$ python -m pip install git+https://github.com/kanflo/trafiklab.git
+
 ```
