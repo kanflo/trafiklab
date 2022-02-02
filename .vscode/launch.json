@@ -11,6 +11,15 @@
             "program": "test/tripmon.py",
             "console": "integratedTerminal",
             "python.envFile": "${workspaceFolder}/.vscode/.env",
+        },
+        {
+            "name": "Tripmon test (debig logging",
+            "type": "python",
+            "request": "launch",
+            "program": "test/tripmon.py",
+            "args": ["-d"],
+            "console": "integratedTerminal",
+            "python.envFile": "${workspaceFolder}/.vscode/.env",
         }
     ]
 }
