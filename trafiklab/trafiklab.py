@@ -214,7 +214,7 @@ class tripmonitor():
                 line = t["LegList"]["Leg"][0]["Product"]["num"]
                 dt = parser.parse("%s %s" % (origin["date"], origin["time"]))
                 if line not in self.blacklist:
-                    trip = {"line": line, "time": dt}
+                    trip = {"line": line, "time": dt, "from": origin["name"], "to": destination["name"]}
                     if not trip in self.trips:
                         now = datetime.now()
                         diff = dt - now
