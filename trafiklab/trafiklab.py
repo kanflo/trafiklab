@@ -6,8 +6,8 @@ from dateutil import parser
 
 
 resource_urls = {
-    "location": "https://api.resrobot.se/v2/location.name",
-    "trip": "https://api.resrobot.se/v2/trip"
+    "location": "https://api.resrobot.se/v2.1/location.name",
+    "trip": "https://api.resrobot.se/v2.1/trip"
 }
 
 # Minimum number of trips we want to have cached
@@ -21,7 +21,7 @@ class trafiklab():
         """Initialize the class
 
         Args:
-            api_key (str): Your own Trafiklab.se API key
+            api_key (str): Your own ResRobot 2.1 API key from Trafiklab.se
         """
         self.api_key = api_key
 
@@ -41,13 +41,18 @@ class trafiklab():
         if not resource in resource_urls:
             raise Exception("Resource '%s' not found in API" % (resource))
         api_params = {
-            "key": self.api_key,
+            "accessId": self.api_key,
             "format": "json",
         }
         api_params.update(params)
-        r = requests.get(resource_urls[resource], params = api_params)
-        # logging.debug(r.text)
-        return r.json()
+        try:
+            r = requests.get(resource_urls[resource], params = api_params)
+            logging.debug("Returned: " + str(r.text))
+            return r.json()
+        except Exception:
+            logging.error("Trafiklab API caused exception", exc_info=True)
+            return None
+
 
     def lookup(self, stop: str) -> Union[list, None]:
         """Lookup a named bus stop. Please not that the API is quite
@@ -65,8 +70,9 @@ class trafiklab():
             Union[list, None]: A list of dicts of matching(-ish) bus stops.
         """
         r = self._api("location", {"input": stop})
-        if "StopLocation" in r:
-            return r["StopLocation"]
+        if "stopLocationOrCoordLocation" in r:
+            r = r["stopLocationOrCoordLocation"]
+            return r
         else:
             return None
 
@@ -141,20 +147,20 @@ class tripmonitor():
         """
         if not origin in self.stop_cache:
             stops = self.api.lookup(origin)
-            if stops is None or len(stops) > 1:
+            if stops is None or len(stops) == 0:
                 logging.error("Could not lookup origin '%s'" % (origin))
                 return False
             else:
-                logging.debug("%s : %s" % (origin, stops[0]["id"]))
-                self.stop_cache[origin] = stops[0]["id"]
+                logging.debug("%s : %s" % (origin, stops[0]["StopLocation"]["extId"]))
+                self.stop_cache[origin] = stops[0]["StopLocation"]["extId"]
         if not destination in self.stop_cache:
             stops = self.api.lookup(destination)
-            if stops is None or len(stops) > 1:
+            if stops is None or len(stops) == 0:
                 logging.error("Could not lookup destination '%s'" % (destination))
                 return False
             else:
-                logging.debug("%s : %s" % (destination, stops[0]["id"]))
-                self.stop_cache[destination] = stops[0]["id"]
+                logging.debug("%s : %s" % (destination, stops[0]["StopLocation"]["extId"]))
+                self.stop_cache[destination] = stops[0]["StopLocation"]["extId"]
         self.routes.append({"origin": origin, "destination": destination})
         return True
 
@@ -211,7 +217,7 @@ class tripmonitor():
             for t in j["Trip"]:
                 origin = t["LegList"]["Leg"][0]["Origin"]
                 destination = t["LegList"]["Leg"][0]["Destination"]
-                line = t["LegList"]["Leg"][0]["Product"]["num"]
+                line = t["LegList"]["Leg"][0]["Product"][0]["num"]
                 dt = parser.parse("%s %s" % (origin["date"], origin["time"]))
                 if line not in self.blacklist:
                     trip = {"line": line, "time": dt, "from": origin["name"], "to": destination["name"]}

@@ -4,7 +4,8 @@ This is a simple module for querying bus routes in Sweden using resrobot.se. As 
 cached, you can hammer this module at will without getting a sore eye from the resrobot.se
 server admins.
 
-Sign up for an API key at resrobot.se and then see test/tripmon.py for an example
+Sign up for a ResRobot 2.1 API key at resrobot.se, then run test/tripmon.py -k <your api key>
+for an example
 
 ## Installing
 
