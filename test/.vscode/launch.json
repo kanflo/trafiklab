@@ -1,0 +1,33 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Tripmon",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tripmon.py",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args" : [],
+            "subProcess": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/../trafiklab"
+                }
+        },
+        {
+            "name": "Tripmon (debug)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tripmon.py",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args" : ["-d"],
+            "subProcess": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/../trafiklab"
+                }
+        }
+    ]
+}
