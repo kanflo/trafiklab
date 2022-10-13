@@ -5,7 +5,7 @@ def readme():
         return f.read()
 
 setup(name='trafiklab',
-      version='0.1',
+      version='0.2',
       description='a frontend for resrobot.se',
       long_description=readme(),
       url='https://github.com/kanflo/trafiklab.git',
